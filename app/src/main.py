@@ -24,7 +24,6 @@ from velocitas_sdk.util.log import (  # type: ignore
     get_opentelemetry_log_factory,
     get_opentelemetry_log_format,
 )
-from velocitas_sdk.vdb.reply import DataPointReply
 from velocitas_sdk.vehicle_app import VehicleApp, subscribe_topic
 
 # Configure the VehicleApp logger with the necessary log config and level.
@@ -63,25 +62,25 @@ class SampleApp(VehicleApp):
         # This method will be called by the SDK when the connection to the
         # Vehicle DataBroker is ready.
         # Here you can subscribe for the Vehicle Signals update (e.g. Vehicle Speed).
-        await self.Vehicle.Speed.subscribe(self.on_speed_change)
+        # await self.Vehicle.Speed.subscribe(self.on_speed_change)
 
-    async def on_speed_change(self, data: DataPointReply):
+        # async def on_speed_change(self, data: DataPointReply):
         """The on_speed_change callback, this will be executed when receiving a new
         vehicle signal updates."""
         # Get the current vehicle speed value from the received DatapointReply.
         # The DatapointReply containes the values of all subscribed DataPoints of
         # the same callback.
-        vehicle_speed = data.get(self.Vehicle.Speed).value
+        # vehicle_speed = data.get(self.Vehicle.Speed).value
 
         # Do anything with the received value.
         # Example:
         # - Publishes current speed to MQTT Topic (i.e. DATABROKER_SUBSCRIPTION_TOPIC).
-        await self.publish_event(
-            DATABROKER_SUBSCRIPTION_TOPIC,
-            json.dumps({"speed": vehicle_speed}),
-        )
+        # await self.publish_event(
+        # DATABROKER_SUBSCRIPTION_TOPIC,
+        # json.dumps({"speed": vehicle_speed}),
+        # )
 
-    @subscribe_topic(GET_SPEED_REQUEST_TOPIC)
+    @subscribe_topic("roof/ambientlight")
     async def on_get_speed_request_received(self, data: str) -> None:
         """The subscribe_topic annotation is used to subscribe for incoming
         PubSub events, e.g. MQTT event for GET_SPEED_REQUEST_TOPIC.
@@ -90,12 +89,12 @@ class SampleApp(VehicleApp):
         # Use the logger with the preferred log level (e.g. debug, info, error, etc)
         logger.debug(
             "PubSub event for the Topic: %s -> is received with the data: %s",
-            GET_SPEED_REQUEST_TOPIC,
+            "roof/ambientlight",
             data,
         )
 
         # Getting current speed from VehicleDataBroker using the DataPoint getter.
-        vehicle_speed = (await self.Vehicle.Speed.get()).value
+        # vehicle_speed = (await self.Vehicle.Speed.get()).value
 
         # Do anything with the speed value.
         # Example:
@@ -105,8 +104,8 @@ class SampleApp(VehicleApp):
             json.dumps(
                 {
                     "result": {
-                        "status": 0,
-                        "message": f"""Current Speed = {vehicle_speed}""",
+                        "status": 1,
+                        "message": data,
                     },
                 }
             ),
