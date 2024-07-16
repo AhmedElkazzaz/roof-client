@@ -100,7 +100,7 @@ class SampleApp(VehicleApp):
         # Example:
         # - Publishes the vehicle speed to MQTT topic (i.e. GET_SPEED_RESPONSE_TOPIC).
         await self.publish_event(
-            GET_SPEED_RESPONSE_TOPIC,
+            "roof/ambientlight/applicationside",
             json.dumps(
                 {
                     "result": {
